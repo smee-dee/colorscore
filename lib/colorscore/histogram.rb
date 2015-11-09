@@ -10,6 +10,10 @@ module Colorscore
       hex_values = @lines.map { |line| line[/#([0-9A-F]{6})[0-9A-F]{0,2} /, 1] }.compact
       hex_values.map { |hex| Color::RGB.from_html(hex) }
     end
+    
+    def rgb_colors
+      @lines.map { |line| line[/ \(([0-9, ]+)\) /, 1].split(',').map(&:strip).take(3).join(',') }.compact
+    end
 
     def color_counts
       @lines.map { |line| line.split(':')[0].to_i }
