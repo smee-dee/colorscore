@@ -1,7 +1,9 @@
+require 'shellwords'
+
 module Colorscore
   class Histogram
     def initialize(image_path, colors=16, depth=8)
-      output = `convert #{image_path} -resize 400x400 -format %c -dither None -quantize YIQ -colors #{colors} -depth #{depth} histogram:info:-`
+      output = `convert #{image_path.shellescape} -resize 400x400 -format %c -dither None -quantize YIQ -colors #{colors} -depth #{depth} histogram:info:-`
       @lines = output.lines.sort.reverse.map(&:strip).reject(&:empty?)
     end
 
@@ -10,7 +12,7 @@ module Colorscore
       hex_values = @lines.map { |line| line[/#([0-9A-F]{6})[0-9A-F]{0,2} /, 1] }.compact
       hex_values.map { |hex| Color::RGB.from_html(hex) }
     end
-    
+
     def rgb_colors
       @lines.map { |line| line[/ \(([0-9, ]+)\) /, 1].split(',').map(&:strip).take(3).join(',') }.compact
     end
